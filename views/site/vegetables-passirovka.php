@@ -1,9 +1,6 @@
 <?php
 
-use app\models\Composition;
 use yii\helpers\Html;
-use yii\helpers\Url;
-use yii\grid\ActionColumn;
 use yii\grid\GridView;
 
 /** @var yii\web\View $this */
@@ -38,6 +35,8 @@ $this->params['breadcrumbs'][] = $this->title;
             ]
         ]
     ]); ?>
+
+    <?=Html::a('Экспорт', ['site/export'], ['class' => 'btn btn-primary']);?>
 
 
 </div>

@@ -15,6 +15,7 @@ use yii\data\ArrayDataProvider;
 
 class SiteController extends Controller
 {
+    
     /**
      * {@inheritdoc}
      */
@@ -149,8 +150,10 @@ class SiteController extends Controller
 
     public function actionVegetablesPassirovka()
     {
+        $query = Composition::vegetablesPassirovka();
+        (Yii::$app->session)['array'] = $query;
         $provider = new ArrayDataProvider([
-            'allModels' => Composition::vegetablesPassirovka(),
+            'allModels' => $query,
             'pagination' => false,
         ]);
         return $this->render('vegetables-passirovka', [
@@ -189,5 +192,31 @@ class SiteController extends Controller
         return $this->render('list-first-dishes', [
             'dataProvider' => $provider,
         ]);
+    }
+
+    public function actionExport()
+    {
+        $list = (Yii::$app->session)['array'];
+        
+        $fp = fopen(Yii::getAlias('@app') . '\export_file\file.csv', 'w+');
+
+        foreach ($list as $fields) {
+            fputcsv($fp, $fields, ';');
+        }
+
+        fclose($fp);
+
+        $filePath = Yii::getAlias('@app') . '\export_file\file.csv';
+        $fileName = 'file.csv';
+
+        // Создание экземпляра класса Response
+        $response = Yii::$app->response;
+
+        $response->format = Response::FORMAT_RAW;
+        $response->headers->add('Content-Type', 'text/csv');
+        $response->headers->add('Content-Disposition', "attachment; filename='$fileName'");
+
+        // Установка других параметров, например, кэширование
+        $response->sendFile($filePath)->send();
     }
 }
