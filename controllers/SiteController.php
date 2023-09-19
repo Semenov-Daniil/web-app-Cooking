@@ -194,7 +194,7 @@ class SiteController extends Controller
         ]);
     }
 
-    public function actionExport()
+    public function actionExport1()
     {
         $list = (Yii::$app->session)['array'];
         
@@ -218,5 +218,28 @@ class SiteController extends Controller
 
         // Установка других параметров, например, кэширование
         $response->sendFile($filePath)->send();
+    }
+
+    public function actionExport2()
+    {
+        $list = (Yii::$app->session)['array'];
+        
+        $fp = fopen(Yii::getAlias('@app') . '\export_file\file.csv', 'w+');
+
+        foreach ($list as $fields) {
+            fputcsv($fp, $fields, ';');
+        }
+
+        fclose($fp);
+
+        $response = Yii::$app->response;
+
+        $filePath = Yii::getAlias('@app') . '\export_file\file.csv';
+        $fileName = 'file.csv';
+
+        $response->headers->add('Content-Type', 'text/csv');
+        $response->headers->add('Content-Disposition', "attachment; filename='$fileName'");
+
+        $response->sendStreamAsFile(fopen($filePath, 'rb'), filesize($filePath));
     }
 }
