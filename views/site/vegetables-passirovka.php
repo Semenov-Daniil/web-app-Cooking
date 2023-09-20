@@ -36,8 +36,8 @@ $this->params['breadcrumbs'][] = $this->title;
         ]
     ]); ?>
 
-    <?=Html::a('Экспорт1', ['site/export1'], ['class' => 'btn btn-primary']);?>
-    <?=Html::a('Экспорт2', ['site/export2'], ['class' => 'btn btn-primary']);?>
+    <?=Html::a('Экспорт1', ['site/export1', 'title' => 'vegetables_passirovka'], ['class' => 'btn btn-primary']);?>
+    <?=Html::a('Экспорт2', ['site/export2', 'title' => 'vegetables_passirovka'], ['class' => 'btn btn-primary']);?>
 
 
 </div>

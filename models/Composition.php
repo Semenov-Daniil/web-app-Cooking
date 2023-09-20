@@ -98,11 +98,11 @@ class Composition extends \yii\db\ActiveRecord
     {
         return static::find()
             ->select([
-                'dishes.title', 'SUM((products.calories*quantity)/many_portions) as calorie'
+                'dishes.title as dishes_title', 'SUM((products.calories*quantity)/many_portions) as calorie'
             ])
             ->innerJoin('dishes', 'dishes.id = composition.dishes_id')
             ->innerJoin('products', 'products.id = composition.products_id')
-            ->groupBy('title', 'calorie')
+            ->groupBy('dishes_title', 'calorie')
             ->orderBy('dishes.title')
             ->asArray()
             ->all();
@@ -112,13 +112,13 @@ class Composition extends \yii\db\ActiveRecord
     {
         return static::find()
             ->select([
-                'dishes.title as dishes', 'count(products.title) as products'
+                'dishes.title as dishes_title', 'count(products.title) as count_spices'
             ])
             ->innerJoin('dishes', 'dishes.id = composition.dishes_id')
             ->innerJoin('products', 'products.id = composition.products_id')
             ->where(['products.category' => 'пряность'])
-            ->groupBy('dishes', 'products')
-            ->orderBy('products DESC')
+            ->groupBy('dishes_title', 'count_spices')
+            ->orderBy('count_spices DESC')
             ->asArray()
             ->all();
     }
@@ -127,12 +127,12 @@ class Composition extends \yii\db\ActiveRecord
     {
         return static::find()
             ->select([
-                'dishes.title as dishes', 'dishes.category', 'products.title as products', 'priority'
+                'dishes.title as dishes_title', 'dishes.category as dishes_category', 'products.title as products_title', 'priority'
             ])
             ->innerJoin('dishes', 'dishes.id = composition.dishes_id')
             ->innerJoin('products', 'products.id = composition.products_id')
             ->where(['dishes.category' => 'первое блюдо'])
-            ->orderBy('dishes.title, priority')
+            ->orderBy('dishes_title, priority')
             ->asArray()
             ->all();
     }

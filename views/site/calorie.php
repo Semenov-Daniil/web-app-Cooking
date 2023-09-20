@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'columns' => [
             [
-                'attribute' => 'title',
+                'attribute' => 'dishes_title',
                 'label' => 'Название блюда',
             ],
             [
@@ -31,5 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ]
     ]); ?>
 
+    <?=Html::a('Экспорт1', ['site/export1', 'title' => 'calorie'], ['class' => 'btn btn-primary']);?>
+    <?=Html::a('Экспорт2', ['site/export2', 'title' => 'calorie'], ['class' => 'btn btn-primary']);?>
 
 </div>

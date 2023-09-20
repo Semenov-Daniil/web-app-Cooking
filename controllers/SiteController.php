@@ -163,8 +163,10 @@ class SiteController extends Controller
 
     public function actionCalorie()
     {
+        $query = Composition::calorie();
+        (Yii::$app->session)['array'] = $query;
         $provider = new ArrayDataProvider([
-            'allModels' => Composition::calorie(),
+            'allModels' => $query,
             'pagination' => false,
         ]);
         return $this->render('calorie', [
@@ -174,8 +176,10 @@ class SiteController extends Controller
 
     public function actionSpices()
     {
+        $query = Composition::spices();
+        (Yii::$app->session)['array'] = $query;
         $provider = new ArrayDataProvider([
-            'allModels' => Composition::spices(),
+            'allModels' => $query,
             'pagination' => false,
         ]);
         return $this->render('spices', [
@@ -185,8 +189,10 @@ class SiteController extends Controller
 
     public function actionListFirstDishes()
     {
+        $query = Composition::listFirstDishes();
+        (Yii::$app->session)['array'] = $query;
         $provider = new ArrayDataProvider([
-            'allModels' => Composition::listFirstDishes(),
+            'allModels' => $query,
             'pagination' => false,
         ]);
         return $this->render('list-first-dishes', [
@@ -197,49 +203,71 @@ class SiteController extends Controller
     public function actionExport1()
     {
         $list = (Yii::$app->session)['array'];
+        $fileName = Yii::$app->request->get('title') . '.cvs';
         
-        $fp = fopen(Yii::getAlias('@app') . '\export_file\file.csv', 'w+');
+        $fp = fopen(Yii::getAlias('@app') . '\export_file\\' . $fileName, 'w+');
 
+        fputcsv($fp, $this->lable(array_keys($list[0])), ';');
         foreach ($list as $fields) {
             fputcsv($fp, $fields, ';');
         }
 
         fclose($fp);
 
-        $filePath = Yii::getAlias('@app') . '\export_file\file.csv';
-        $fileName = 'file.csv';
+        $filePath = Yii::getAlias('@app') . '\export_file\\' . $fileName;
+        // $fileName = 'file.csv';
 
-        // Создание экземпляра класса Response
         $response = Yii::$app->response;
-
         $response->format = Response::FORMAT_RAW;
         $response->headers->add('Content-Type', 'text/csv');
-        $response->headers->add('Content-Disposition', "attachment; filename='$fileName'");
+        $response->headers->add('Content-Disposition', "attachment; filename=$fileName");
 
-        // Установка других параметров, например, кэширование
         $response->sendFile($filePath)->send();
     }
 
     public function actionExport2()
     {
         $list = (Yii::$app->session)['array'];
+        $fileName = Yii::$app->request->get('title') . '.cvs';
         
-        $fp = fopen(Yii::getAlias('@app') . '\export_file\file.csv', 'w+');
-
+        $text = implode(';', $this->lable(array_keys($list[0]))) . PHP_EOL;
+        
         foreach ($list as $fields) {
-            fputcsv($fp, $fields, ';');
+            $text .= implode(';', $fields) . PHP_EOL;
         }
-
-        fclose($fp);
 
         $response = Yii::$app->response;
 
-        $filePath = Yii::getAlias('@app') . '\export_file\file.csv';
-        $fileName = 'file.csv';
+        $filePath = Yii::getAlias('@app') . '\export_file\\' . $fileName;
 
         $response->headers->add('Content-Type', 'text/csv');
-        $response->headers->add('Content-Disposition', "attachment; filename='$fileName'");
+        $response->headers->add('Content-Disposition', "attachment; filename=$fileName");
 
-        $response->sendStreamAsFile(fopen($filePath, 'rb'), filesize($filePath));
+        $response->sendContentAsFile($text, $fileName)->send();
+    }
+
+    public function lable($array)
+    {
+        $lable = [
+            'dishes_title' => 'Название блюда',
+            'products_title' => 'Название продукта',
+            'category' => 'Категория продукта',
+            'pre_processing' => 'Предварительная обработка продутка',
+            'count_spices' => 'Количество пряных продуктов',
+            'dishes_category' => 'Категория блюда',
+            'priority' => 'Очередь добавления',
+            'calorie' => 'Калорийность'
+        ];
+
+        foreach ($array as $key => $val) {
+            foreach ($lable as $key2 => $val2) {
+                if ($val == $key2) {
+                    $array[$key] = $val2;
+                    continue;
+                }
+            }
+        }
+
+        return $array;
     }
 }

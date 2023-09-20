@@ -21,15 +21,15 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'columns' => [
             [
-                'attribute' => 'dishes',
+                'attribute' => 'dishes_title',
                 'label' => 'Название блюда',
             ],
             [
-                'attribute' => 'category',
+                'attribute' => 'dishes_category',
                 'label' => 'Категория блюда',
             ],
             [
-                'attribute' => 'products',
+                'attribute' => 'products_title',
                 'label' => 'Название продукта',
             ],
             [
@@ -38,6 +38,9 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ]
     ]); ?>
+
+    <?=Html::a('Экспорт1', ['site/export1', 'title' => 'first_dishes'], ['class' => 'btn btn-primary']);?>
+    <?=Html::a('Экспорт2', ['site/export2', 'title' => 'first_dishes'], ['class' => 'btn btn-primary']);?>
 
 
 </div>
