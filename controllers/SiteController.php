@@ -203,7 +203,7 @@ class SiteController extends Controller
     public function actionExport1()
     {
         $list = (Yii::$app->session)['array'];
-        $fileName = Yii::$app->request->get('title') . '.cvs';
+        $fileName = Yii::$app->request->get('title') . '.csv';
         
         $fp = fopen(Yii::getAlias('@app') . '\export_file\\' . $fileName, 'w+');
 
@@ -215,7 +215,6 @@ class SiteController extends Controller
         fclose($fp);
 
         $filePath = Yii::getAlias('@app') . '\export_file\\' . $fileName;
-        // $fileName = 'file.csv';
 
         $response = Yii::$app->response;
         $response->format = Response::FORMAT_RAW;
@@ -228,7 +227,7 @@ class SiteController extends Controller
     public function actionExport2()
     {
         $list = (Yii::$app->session)['array'];
-        $fileName = Yii::$app->request->get('title') . '.cvs';
+        $fileName = Yii::$app->request->get('title') . '.csv';
         
         $text = implode(';', $this->lable(array_keys($list[0]))) . PHP_EOL;
         
@@ -238,12 +237,10 @@ class SiteController extends Controller
 
         $response = Yii::$app->response;
 
-        $filePath = Yii::getAlias('@app') . '\export_file\\' . $fileName;
-
         $response->headers->add('Content-Type', 'text/csv');
         $response->headers->add('Content-Disposition', "attachment; filename=$fileName");
 
-        $response->sendContentAsFile($text, $fileName)->send();
+        $response->sendContentAsFile(iconv('UTF-8', 'Windows-1251', $text), $fileName)->send();
     }
 
     public function lable($array)
